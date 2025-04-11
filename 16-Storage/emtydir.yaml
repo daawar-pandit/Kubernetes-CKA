@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: redis
+  labels:
+    app: redis
+spec:
+  containers:
+  - name: redis
+    image: redis:latest
+    ports:
+    - containerPort: 6379
+    resources:
+      limits:
+        cpu: 500m
+        memory: 256Mi
+      requests:
+        cpu: 200m
+        memory: 128Mi
+    volumeMounts:
+     - name:  redis-volume
+       mountPath:  /data/redis
+  volumes:
+  - name: redis-volume
+    emptyDir: {}    
+
+# in this the volume is mounted to the /data/redis directory in the container.
+# when the container starts, it will use this volume for data storage.
+# the emptyDir volume is created when the Pod is assigned to a Node and exists as long as that Pod is running on that Node.

@@ -1,0 +1,21 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: db-test
+spec:
+  podSelector:
+    matchLabels:
+      name: mysql
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          role: backend
+    ports:
+    - port: 3306
+
+
+# Only pods labeled role=backend are allowed to access the mysql pod on port 3306.
+# All other pods, even in the same namespace, will be blocked unless explicitly allowed."

@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    run: redis
+  name: redis
+spec:
+  containers:
+  - image: redis
+    name: redis
+    resources: {}
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+  affinity:
+    nodeAffinity:
+       requiredDuringSchedulingIgnoredDuringExecution:
+         nodeSelectorTerms:
+          - matchExpressions:
+            - key: label-1
+              operator: In
+              values:
+              - key-1
+
+# This sets a hard node affinity rule, which tells Kubernetes:
+# Only schedule this pod on nodes that have a label label-1=key-1              
+          

@@ -1,0 +1,19 @@
+# This YAML file defines a Kubernetes Pod named 'nginx' with a single container running the 'nginx' image. 
+# It uses a nodeSelector to schedule the Pod on nodes labeled with 'gpu: "false"'.
+
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    run: nginx
+  name: nginx
+spec:
+  containers:
+  - image: nginx
+    name: nginx
+    resources: {}
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+  nodeSelector:
+    gpu: "false"
+status: {}

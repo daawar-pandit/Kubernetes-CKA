@@ -1,0 +1,27 @@
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: php-apache
+spec:
+  maxReplicas: 10
+  minReplicas: 1
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: php-apache
+  targetCPUUtilizationPercentage: 50
+status:
+  currentReplicas: 0
+  desiredReplicas: 0
+
+# HPA uses metrics like CPU or memory usage to make scaling decisions. 
+# For that, it depends on the Metrics Server, which collects resource usage data from Kubelets.
+# To install the Metrics Server, you can use the following command: 
+# kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+# After installing the Metrics Server, you can check its status with:
+# kubectl get deployment metrics-server -n kube-system
+# To check the status of the HPA, you can use the following command:
+# kubectl get hpa
+# To see the metrics being collected, you can use:
+# kubectl top pods        
+# kubectl top nodes

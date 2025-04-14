@@ -1,22 +1,27 @@
-# This is a sample pod yaml
+# This YAML defines a basic Kubernetes Pod running an Nginx web server
 
-apiVersion: v1
-kind: Pod
+# API version and resource type
+apiVersion: v1  # Core Kubernetes API version
+kind: Pod       # Defines this as a Pod resource
+
+# Pod metadata including name and labels
 metadata:
-  name: nginx-pod
-  labels:
-    env: demo
-    type: frontend
+  name: nginx-pod  # Unique name for the Pod
+  labels:         # Labels are key-value pairs for organizing and selecting pods
+    env: demo     # Label indicating environment
+    type: frontend # Label indicating pod's role
+
+# Pod specification - defines the desired state
 spec:
-  containers:
-  - name: nginx-container
-    image: nginx
-    ports:
-    - containerPort: 80
-    resources:
-      limits:
-        memory: "128Mi"
-        cpu: "500m"
-      requests:
-        memory: "64Mi"
-        cpu: "250m"
+  containers:    # List of containers in the pod
+  - name: nginx-container  # Name of the container
+    image: nginx  # Docker image to use
+    ports:       # Container port configuration
+    - containerPort: 80  # Port that Nginx listens on
+    resources:   # Resource requests and limits for the container
+      limits:    # Maximum resources the container can use
+        memory: "128Mi"  # Memory limit of 128 Mebibytes
+        cpu: "500m"      # CPU limit of 500 milliCPU (0.5 CPU cores)
+      requests:  # Minimum resources guaranteed to the container
+        memory: "64Mi"   # Minimum memory request
+        cpu: "250m"      # Minimum CPU request (0.25 CPU cores)

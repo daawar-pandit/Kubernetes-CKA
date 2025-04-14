@@ -1,28 +1,39 @@
-apiVersion: apps/v1
-kind: Deployment
+# This YAML defines a Kubernetes Deployment that manages multiple replicas of an Nginx web server
+
+# API version and resource type
+apiVersion: apps/v1  # Use apps/v1 API for Deployments
+kind: Deployment     # Defines this as a Deployment resource
+
+# Deployment metadata
 metadata:
-  name: nginx-deployment
-  labels:
-    app: nginx
+  name: nginx-deployment  # Unique name for the Deployment
+  labels:                # Labels for identifying the Deployment
+    app: nginx           # Label to identify this app as nginx
+
+# Deployment specification
 spec:
-  replicas: 3
+  replicas: 3           # Desired number of pod replicas to maintain
+
+  # Label selector for pods managed by this deployment
   selector:
-    matchLabels:
+    matchLabels:        # Must match template metadata labels
       app: nginx
+
+  # Pod template - defines the pods created by this deployment
   template:
     metadata:
-      labels:
+      labels:           # Labels applied to pods created from this template
         app: nginx
     spec:
-      containers:
-      - name: nginx
-        image: nginx:1.14.2
-        ports:
-        - containerPort: 80
-        resources:
-          limits:
-            memory: "128Mi"
-            cpu: "500m"
-          requests:
-            memory: "64Mi"
-            cpu: "250m"
+      containers:       # List of containers in each pod
+      - name: nginx     # Container name
+        image: nginx:1.14.2  # Specific version of nginx to use
+        ports:          # Container port configuration
+        - containerPort: 80  # Port that nginx listens on
+        resources:      # Resource configuration for the container
+          limits:       # Maximum resource limits
+            memory: "128Mi"  # Memory limit of 128 Mebibytes
+            cpu: "500m"      # CPU limit of 500 milliCPU (0.5 CPU cores)
+          requests:     # Minimum resource requests
+            memory: "64Mi"   # Minimum memory request
+            cpu: "250m"      # Minimum CPU request (0.25 CPU cores)

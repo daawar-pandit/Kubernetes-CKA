@@ -1,42 +1,54 @@
-apiVersion: v1
-kind: Pod
+# This YAML defines a Pod with init containers that wait for dependent services
+
+# API version and resource type
+apiVersion: v1    # Core Kubernetes API version
+kind: Pod         # Defines this as a Pod resource
+
+# Pod metadata
 metadata:
-  name: myapp-pod
+  name: myapp-pod  # Unique name for the Pod
   labels:
-    app.kubernetes.io/name: MyApp
+    app.kubernetes.io/name: MyApp  # Label for identifying the application
+
+# Pod specification
 spec:
+  # Main application container
   containers:
-  - name: myapp-container
-    image: busybox:1.28
-    command: ['sh', '-c', 'echo The app is running! && sleep 3600']
-    resources:
-      limits:
-        memory: "128Mi"
-        cpu: "500m"
-      requests:
-        memory: "64Mi"
-        cpu: "250m"
+  - name: myapp-container  # Container name
+    image: busybox:1.28    # Container image to use
+    command: ['sh', '-c', 'echo The app is running! && sleep 3600']  # Container startup command
+    resources:             # Resource configuration
+      limits:             # Maximum resource limits
+        memory: "128Mi"   # Memory limit
+        cpu: "500m"       # CPU limit (500 milliCPU = 0.5 CPU cores)
+      requests:           # Minimum resource requests
+        memory: "64Mi"    # Minimum memory request
+        cpu: "250m"       # Minimum CPU request (0.25 CPU cores)
+  # Init containers - run to completion before app container starts
   initContainers:
+  # First init container - waits for myservice to be ready
   - name: init-myservice
-    image: busybox:1.28
+    image: busybox:1.28    # Using busybox for DNS lookup
     command: ['sh', '-c', "until nslookup myservice.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for myservice; sleep 2; done"]
-    resources:
-      limits:
-        memory: "64Mi"
-        cpu: "250m"
-      requests:
-        memory: "32Mi"
-        cpu: "125m"
+    resources:            # Resource configuration
+      limits:            # Maximum resource limits
+        memory: "64Mi"   # Memory limit
+        cpu: "250m"      # CPU limit (0.25 CPU cores)
+      requests:          # Minimum resource requests
+        memory: "32Mi"   # Minimum memory request
+        cpu: "125m"      # Minimum CPU request
+
+  # Second init container - waits for mydb to be ready
   - name: init-mydb
-    image: busybox:1.28
+    image: busybox:1.28    # Using busybox for DNS lookup
     command: ['sh', '-c', "until nslookup mydb.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for mydb; sleep 2; done"]
-    resources:
-      limits:
-        memory: "64Mi"
-        cpu: "250m"
-      requests:
-        memory: "32Mi"
-        cpu: "125m"
+    resources:            # Resource configuration
+      limits:            # Maximum resource limits
+        memory: "64Mi"   # Memory limit
+        cpu: "250m"      # CPU limit (0.25 CPU cores)
+      requests:          # Minimum resource requests
+        memory: "32Mi"   # Minimum memory request
+        cpu: "125m"      # Minimum CPU request
   - name: init-myservice
     image: busybox:1.28
     command: ['sh', '-c', "until nslookup myservice.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for myservice; sleep 2; done"]
@@ -47,22 +59,24 @@ spec:
 
 
 ---
-apiVersion: v1
-kind: Service
+# Service definition for myservice
+apiVersion: v1    # Core Kubernetes API version
+kind: Service     # Defines this as a Service resource
 metadata:
-  name: myservice
+  name: myservice # Service name that init container waits for
 spec:
-  ports:
-  - protocol: TCP
-    port: 80
-    targetPort: 9376
+  ports:         # Port configuration
+  - protocol: TCP # Using TCP protocol
+    port: 80      # Service port
+    targetPort: 9376  # Target port on the pods
 ---
-apiVersion: v1
-kind: Service
+# Service definition for mydb
+apiVersion: v1    # Core Kubernetes API version
+kind: Service     # Defines this as a Service resource
 metadata:
-  name: mydb
+  name: mydb      # Service name that init container waits for
 spec:
-  ports:
-  - protocol: TCP
-    port: 80
-    targetPort: 9377
+  ports:         # Port configuration
+  - protocol: TCP # Using TCP protocol
+    port: 80      # Service port
+    targetPort: 9377  # Target port on the pods

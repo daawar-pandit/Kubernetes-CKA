@@ -1,27 +1,36 @@
-apiVersion: apps/v1
-kind: DaemonSet
+# This YAML defines a DaemonSet that ensures one nginx pod runs on each node in the cluster
+
+# API version and resource type
+apiVersion: apps/v1  # Apps API version for DaemonSet
+kind: DaemonSet     # Defines this as a DaemonSet resource
+
+# DaemonSet metadata
 metadata:
-  name: nginx-ds
-  labels:
-    app: nginx
+  name: nginx-ds    # Unique name for the DaemonSet
+  labels:           # Labels for identifying the DaemonSet
+    app: nginx      # Label to identify this app as nginx
+
+# DaemonSet specification
 spec:
-  selector:
-    matchLabels:
-      app: nginx
+  selector:         # Pod selector for DaemonSet
+    matchLabels:    # Must match template metadata labels
+      app: nginx    # Selects pods with label app=nginx
+
+  # Pod template - defines the pods created by this DaemonSet
   template:
     metadata:
-      labels:
-        app: nginx
+      labels:       # Labels applied to pods created from this template
+        app: nginx  # Label to identify nginx pods
     spec:
-      containers:
-      - name: nginx
-        image: nginx:1.14.2
-        ports:
-        - containerPort: 80
-        resources:
-          limits:
-            memory: "128Mi"
-            cpu: "500m"
-          requests:
-            memory: "64Mi"
-            cpu: "250m"
+      containers:   # List of containers in each pod
+      - name: nginx # Container name
+        image: nginx:1.14.2  # Specific version of nginx to use
+        ports:      # Container port configuration
+        - containerPort: 80  # Port that nginx listens on
+        resources:  # Resource configuration for the container
+          limits:   # Maximum resource limits
+            memory: "128Mi"  # Memory limit of 128 Mebibytes
+            cpu: "500m"      # CPU limit of 500 milliCPU (0.5 CPU cores)
+          requests: # Minimum resources guaranteed to the container
+            memory: "64Mi"   # Minimum memory request
+            cpu: "250m"      # Minimum CPU request (0.25 CPU cores)
